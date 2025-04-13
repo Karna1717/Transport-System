@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -26,7 +25,7 @@ export default function TrackParcelPage() {
   };
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 fade-in">
       <h1 className="text-3xl font-bold mb-6 text-center">Track Your Parcel</h1>
 
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-6">
@@ -37,7 +36,7 @@ export default function TrackParcelPage() {
           onChange={(e) => setTrackingId(e.target.value)}
           className="w-full md:w-auto"
         />
-        <Button onClick={handleTrack} disabled={isLoading} className="bg-primary text-background hover:bg-primary-foreground">
+        <Button onClick={handleTrack} disabled={isLoading} className="bg-primary text-background hover:bg-primary-foreground transition-colors duration-300">
           {isLoading ? "Loading..." : "Track"}
         </Button>
       </div>
@@ -85,6 +84,3 @@ export default function TrackParcelPage() {
     </div>
   );
 }
-
-
-    
