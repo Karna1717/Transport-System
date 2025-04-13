@@ -19,6 +19,7 @@ import * as z from "zod";
 import { Address, PackageDetails, CourierOption } from "@/services/courier";
 import { getCourierOptions } from "@/services/courier";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {suggestPackageOptions, SuggestPackageOptionsInput, SuggestPackageOptionsOutput} from '@/ai/flows/suggest-package-options';
 
 const packageDetailsSchema = z.object({
   size: z.string().min(2, {
@@ -53,7 +54,7 @@ const bookShipmentSchema = z.object({
 type BookShipmentValues = z.infer<typeof bookShipmentSchema>;
 
 export default function BookShipmentPage() {
-  const [courierOptions, setCourierOptions] = useState<CourierOption[]>([]);
+  const [courierOptions, setCourierOptions] = useState<SuggestPackageOptionsOutput>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<BookShipmentValues>({
@@ -81,11 +82,12 @@ export default function BookShipmentPage() {
   async function onSubmit(values: BookShipmentValues) {
     setIsLoading(true);
     try {
-      const options = await getCourierOptions(
-        values.packageDetails as PackageDetails,
-        values.pickupAddress as Address,
-        values.deliveryAddress as Address
-      );
+      const input: SuggestPackageOptionsInput = {
+        packageDetails: values.packageDetails,
+        pickupAddress: values.pickupAddress,
+        deliveryAddress: values.deliveryAddress,
+      };
+      const options = await suggestPackageOptions(input);
       setCourierOptions(options);
     } catch (error) {
       console.error("Failed to fetch courier options", error);
@@ -272,6 +274,7 @@ export default function BookShipmentPage() {
                 <CardContent className="space-y-1">
                   <p className="text-muted-foreground">Delivery Time: {option.deliveryTimeDays} days</p>
                   <p className="text-muted-foreground">Cost: ${option.costUSD}</p>
+                  <p className="text-muted-foreground">Recommendation Reason: {option.recommendationReason}</p>
                 </CardContent>
               </Card>
             ))}
