@@ -18,6 +18,24 @@ const testimonials = [
     quote: "The real-time tracking feature has significantly improved our customer satisfaction. Highly recommended!",
     image: "https://picsum.photos/50/50?random=2",
   },
+  {
+    name: "Charlie Brown",
+    title: "Retail Store Owner",
+    quote: "We've been using TranspoEase for our local deliveries and the service is top-notch. Our customers are happy and so are we!",
+    image: "https://picsum.photos/50/50?random=8",
+  },
+  {
+    name: "Diana Miller",
+    title: "Online Boutique Owner",
+    quote: "The international shipping options have opened up new markets for our business. TranspoEase makes it easy to reach customers worldwide.",
+    image: "https://picsum.photos/50/50?random=9",
+  },
+  {
+    name: "Ethan Davis",
+    title: "Corporate Executive",
+    quote: "For our urgent, same-day deliveries, TranspoEase is our go-to service. They are reliable, fast, and professional.",
+    image: "https://picsum.photos/50/50?random=10",
+  },
 ];
 
 export default function Home() {
