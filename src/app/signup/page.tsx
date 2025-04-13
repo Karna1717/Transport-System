@@ -14,22 +14,22 @@ export default function SignupPage() {
             <label className="block text-sm font-medium leading-none mb-1">
               Username
             </label>
-            <Input type="text" placeholder="Enter your username" />
+            <Input type="text" placeholder="Enter your username" className="shadow-sm"/>
           </div>
           <div>
             <label className="block text-sm font-medium leading-none mb-1">
               Email
             </label>
-            <Input type="email" placeholder="Enter your email" />
+            <Input type="email" placeholder="Enter your email" className="shadow-sm"/>
           </div>
           <div>
             <label className="block text-sm font-medium leading-none mb-1">
               Password
             </label>
-            <Input type="password" placeholder="Enter your password" />
+            <Input type="password" placeholder="Enter your password" className="shadow-sm"/>
           </div>
         </div>
-        <Button className="w-full mt-6 bg-primary text-background hover:bg-primary-foreground transition-colors duration-300">
+        <Button className="w-full mt-6 bg-primary text-background hover:bg-primary-foreground transition-colors duration-300 shadow-md">
           Sign Up
         </Button>
         <p className="mt-4 text-center text-sm">

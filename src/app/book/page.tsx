@@ -116,7 +116,7 @@ export default function BookShipmentPage() {
                     <FormItem>
                       <FormLabel>Size</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Medium" {...field} />
+                        <Input placeholder="e.g., Medium" className="shadow-sm" {...field} />
                       </FormControl>
                       <FormDescription>Enter the size of the package.</FormDescription>
                       <FormMessage />
@@ -134,6 +134,7 @@ export default function BookShipmentPage() {
                           type="number"
                           step="0.1"
                           placeholder="e.g., 1.5"
+                          className="shadow-sm"
                           {...field}
                         />
                       </FormControl>
@@ -153,7 +154,7 @@ export default function BookShipmentPage() {
                     <FormItem>
                       <FormLabel>Street</FormLabel>
                       <FormControl>
-                        <Input placeholder="123 Main St" {...field} />
+                        <Input placeholder="123 Main St" className="shadow-sm" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -166,7 +167,7 @@ export default function BookShipmentPage() {
                     <FormItem>
                       <FormLabel>City</FormLabel>
                       <FormControl>
-                        <Input placeholder="New York" {...field} />
+                        <Input placeholder="New York" className="shadow-sm" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -179,7 +180,7 @@ export default function BookShipmentPage() {
                     <FormItem>
                       <FormLabel>State</FormLabel>
                       <FormControl>
-                        <Input placeholder="NY" {...field} />
+                        <Input placeholder="NY" className="shadow-sm" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -192,7 +193,7 @@ export default function BookShipmentPage() {
                     <FormItem>
                       <FormLabel>Zip Code</FormLabel>
                       <FormControl>
-                        <Input placeholder="10001" {...field} />
+                        <Input placeholder="10001" className="shadow-sm" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -209,7 +210,7 @@ export default function BookShipmentPage() {
                     <FormItem>
                       <FormLabel>Street</FormLabel>
                       <FormControl>
-                        <Input placeholder="456 Elm St" {...field} />
+                        <Input placeholder="456 Elm St" className="shadow-sm" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -222,7 +223,7 @@ export default function BookShipmentPage() {
                     <FormItem>
                       <FormLabel>City</FormLabel>
                       <FormControl>
-                        <Input placeholder="Los Angeles" {...field} />
+                        <Input placeholder="Los Angeles" className="shadow-sm" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -235,7 +236,7 @@ export default function BookShipmentPage() {
                     <FormItem>
                       <FormLabel>State</FormLabel>
                       <FormControl>
-                        <Input placeholder="CA" {...field} />
+                        <Input placeholder="CA" className="shadow-sm" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -248,7 +249,7 @@ export default function BookShipmentPage() {
                     <FormItem>
                       <FormLabel>Zip Code</FormLabel>
                       <FormControl>
-                        <Input placeholder="90001" {...field} />
+                        <Input placeholder="90001" className="shadow-sm" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

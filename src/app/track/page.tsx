@@ -34,9 +34,9 @@ export default function TrackParcelPage() {
           placeholder="Enter your tracking ID"
           value={trackingId}
           onChange={(e) => setTrackingId(e.target.value)}
-          className="w-full md:w-auto"
+          className="w-full md:w-auto shadow-sm"
         />
-        <Button onClick={handleTrack} disabled={isLoading} className="bg-primary text-background hover:bg-primary-foreground transition-colors duration-300">
+        <Button onClick={handleTrack} disabled={isLoading} className="bg-primary text-background hover:bg-primary-foreground transition-colors duration-300 shadow-md">
           {isLoading ? "Loading..." : "Track"}
         </Button>
       </div>
