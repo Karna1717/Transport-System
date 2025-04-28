@@ -1,287 +1,212 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { Address, PackageDetails, CourierOption } from "@/services/courier";
-import { getCourierOptions } from "@/services/courier";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {suggestPackageOptions, SuggestPackageOptionsInput, SuggestPackageOptionsOutput} from '@/ai/flows/suggest-package-options';
+import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
-const packageDetailsSchema = z.object({
-  size: z.string().min(2, {
-    message: "Package size must be at least 2 characters.",
-  }),
-  weightKg: z.number().min(0.1, {
-    message: "Weight must be greater than 0.",
-  }),
-});
-
-const addressSchema = z.object({
-  street: z.string().min(5, {
-    message: "Street address must be at least 5 characters.",
-  }),
-  city: z.string().min(2, {
-    message: "City must be at least 2 characters.",
-  }),
-  state: z.string().min(2, {
-    message: "State must be at least 2 characters.",
-  }),
-  zip: z.string().regex(/^\d{5}(?:-\d{4})?$/, {
-    message: "Invalid zip code format.",
-  }),
-});
-
-const bookShipmentSchema = z.object({
-  packageDetails: packageDetailsSchema,
-  pickupAddress: addressSchema,
-  deliveryAddress: addressSchema,
-});
-
-type BookShipmentValues = z.infer<typeof bookShipmentSchema>;
-
-export default function BookShipmentPage() {
-  const [courierOptions, setCourierOptions] = useState<SuggestPackageOptionsOutput>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const form = useForm<BookShipmentValues>({
-    resolver: zodResolver(bookShipmentSchema),
-    defaultValues: {
-      packageDetails: {
-        size: "",
-        weightKg: 1,
-      },
-      pickupAddress: {
-        street: "",
-        city: "",
-        state: "",
-        zip: "",
-      },
-      deliveryAddress: {
-        street: "",
-        city: "",
-        state: "",
-        zip: "",
-      },
-    },
+export default function BookNow() {
+  const [formData, setFormData] = useState({
+    pickupAddress: "",
+    deliveryAddress: "",
+    packageType: "",
+    weight: "",
+    dimensions: "",
+    specialInstructions: "",
+    contactName: "",
+    contactPhone: "",
+    contactEmail: ""
   });
 
-  async function onSubmit(values: BookShipmentValues) {
-    setIsLoading(true);
-    try {
-      const input: SuggestPackageOptionsInput = {
-        packageDetails: values.packageDetails,
-        pickupAddress: values.pickupAddress,
-        deliveryAddress: values.deliveryAddress,
-      };
-      const options = await suggestPackageOptions(input);
-      setCourierOptions(options);
-    } catch (error) {
-      console.error("Failed to fetch courier options", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const { toast } = useToast();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here you would typically send the form data to your backend
+    toast({
+      title: "Booking Successful!",
+      description: "Your delivery has been scheduled. We'll contact you shortly with the details.",
+    });
+  };
 
   return (
-    <div className="container mx-auto py-10 fade-in">
-      <h1 className="text-3xl font-bold mb-6 text-center">Book Your Shipment</h1>
-
-      <Card className="w-full md:w-3/4 mx-auto">
-        <CardHeader>
-          <CardTitle>Enter Shipment Details</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold mb-3">Package Details</h2>
-                <FormField
-                  control={form.control}
-                  name="packageDetails.size"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Size</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Medium" className="shadow-sm" {...field} />
-                      </FormControl>
-                      <FormDescription>Enter the size of the package.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="packageDetails.weightKg"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Weight (kg)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
-                          placeholder="e.g., 1.5"
-                          className="shadow-sm"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>Enter the weight of the package in kilograms.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div>
-                <h2 className="text-xl font-semibold mb-3">Pickup Address</h2>
-                <FormField
-                  control={form.control}
-                  name="pickupAddress.street"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Street</FormLabel>
-                      <FormControl>
-                        <Input placeholder="123 Main St" className="shadow-sm" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="pickupAddress.city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>City</FormLabel>
-                      <FormControl>
-                        <Input placeholder="New York" className="shadow-sm" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="pickupAddress.state"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>State</FormLabel>
-                      <FormControl>
-                        <Input placeholder="NY" className="shadow-sm" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="pickupAddress.zip"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Zip Code</FormLabel>
-                      <FormControl>
-                        <Input placeholder="10001" className="shadow-sm" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div>
-                <h2 className="text-xl font-semibold mb-3">Delivery Address</h2>
-                <FormField
-                  control={form.control}
-                  name="deliveryAddress.street"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Street</FormLabel>
-                      <FormControl>
-                        <Input placeholder="456 Elm St" className="shadow-sm" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="deliveryAddress.city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>City</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Los Angeles" className="shadow-sm" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="deliveryAddress.state"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>State</FormLabel>
-                      <FormControl>
-                        <Input placeholder="CA" className="shadow-sm" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="deliveryAddress.zip"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Zip Code</FormLabel>
-                      <FormControl>
-                        <Input placeholder="90001" className="shadow-sm" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <Button type="submit" disabled={isLoading} className="bg-primary text-background hover:bg-primary-foreground transition-colors duration-300">
-                {isLoading ? "Loading..." : "Get Courier Options"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-
-      {courierOptions.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-2xl font-semibold mb-4">Available Courier Options</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courierOptions.map((option) => (
-              <Card key={option.name} className="p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardTitle className="text-xl font-semibold mb-2">{option.name}</CardTitle>
-                <CardContent className="space-y-1">
-                  <p className="text-muted-foreground">Delivery Time: {option.deliveryTimeDays} days</p>
-                  <p className="text-muted-foreground">Cost: ${option.costUSD}</p>
-                  <p className="text-muted-foreground">Recommendation Reason: {option.recommendationReason}</p>
-                </CardContent>
-              </Card>
-            ))}
+    <div className="min-h-screen py-20 bg-gradient-to-b from-background to-muted">
+      <div className="container mx-auto px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+              Book Your Delivery
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              Fill out the form below to schedule your delivery
+            </p>
           </div>
+
+          <Card className="bg-background">
+            <CardHeader>
+              <CardTitle>Delivery Details</CardTitle>
+              <CardDescription>
+                Please provide all the necessary information for your delivery
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleFormSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="pickupAddress" className="text-sm font-medium">
+                      Pickup Address
+                    </label>
+                    <Input
+                      id="pickupAddress"
+                      name="pickupAddress"
+                      placeholder="Enter pickup address"
+                      value={formData.pickupAddress}
+                      onChange={handleInputChange}
+                      required
+                      className="bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="deliveryAddress" className="text-sm font-medium">
+                      Delivery Address
+                    </label>
+                    <Input
+                      id="deliveryAddress"
+                      name="deliveryAddress"
+                      placeholder="Enter delivery address"
+                      value={formData.deliveryAddress}
+                      onChange={handleInputChange}
+                      required
+                      className="bg-background"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="packageType" className="text-sm font-medium">
+                      Package Type
+                    </label>
+                    <Input
+                      id="packageType"
+                      name="packageType"
+                      placeholder="e.g., Document, Box"
+                      value={formData.packageType}
+                      onChange={handleInputChange}
+                      required
+                      className="bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="weight" className="text-sm font-medium">
+                      Weight (kg)
+                    </label>
+                    <Input
+                      id="weight"
+                      name="weight"
+                      type="number"
+                      placeholder="Enter weight"
+                      value={formData.weight}
+                      onChange={handleInputChange}
+                      required
+                      className="bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="dimensions" className="text-sm font-medium">
+                      Dimensions (LxWxH)
+                    </label>
+                    <Input
+                      id="dimensions"
+                      name="dimensions"
+                      placeholder="e.g., 30x20x10"
+                      value={formData.dimensions}
+                      onChange={handleInputChange}
+                      required
+                      className="bg-background"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="specialInstructions" className="text-sm font-medium">
+                    Special Instructions
+                  </label>
+                  <Textarea
+                    id="specialInstructions"
+                    name="specialInstructions"
+                    placeholder="Any special handling requirements?"
+                    value={formData.specialInstructions}
+                    onChange={handleInputChange}
+                    className="min-h-[100px] bg-background"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="contactName" className="text-sm font-medium">
+                      Contact Name
+                    </label>
+                    <Input
+                      id="contactName"
+                      name="contactName"
+                      placeholder="Your name"
+                      value={formData.contactName}
+                      onChange={handleInputChange}
+                      required
+                      className="bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="contactPhone" className="text-sm font-medium">
+                      Contact Phone
+                    </label>
+                    <Input
+                      id="contactPhone"
+                      name="contactPhone"
+                      type="tel"
+                      placeholder="Your phone number"
+                      value={formData.contactPhone}
+                      onChange={handleInputChange}
+                      required
+                      className="bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="contactEmail" className="text-sm font-medium">
+                      Contact Email
+                    </label>
+                    <Input
+                      id="contactEmail"
+                      name="contactEmail"
+                      type="email"
+                      placeholder="Your email"
+                      value={formData.contactEmail}
+                      onChange={handleInputChange}
+                      required
+                      className="bg-background"
+                    />
+                  </div>
+                </div>
+
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+                  Schedule Delivery
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </div>
-      )}
+      </div>
     </div>
   );
 }
