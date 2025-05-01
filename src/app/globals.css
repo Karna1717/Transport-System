@@ -77,6 +77,60 @@ body {
   }
 }
 
+@layer components {
+  .auth-container {
+    @apply min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted p-4;
+  }
+
+  .auth-card {
+    @apply w-full max-w-md bg-background/95 backdrop-blur-sm shadow-lg rounded-xl border border-border/50;
+  }
+
+  .auth-input {
+    @apply bg-background/50 border-border/50 focus:border-primary/50 transition-colors duration-200;
+  }
+
+  .auth-button {
+    @apply w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-200 
+           transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .auth-link {
+    @apply text-primary hover:text-primary/80 transition-colors duration-200;
+  }
+
+  .auth-divider {
+    @apply relative my-6;
+  }
+
+  .auth-divider::before {
+    content: "";
+    @apply absolute inset-0 flex items-center;
+  }
+
+  .auth-divider::before {
+    @apply border-t border-border/50;
+  }
+
+  .auth-divider span {
+    @apply relative flex justify-center text-xs uppercase;
+  }
+
+  .auth-divider span::before,
+  .auth-divider span::after {
+    content: "";
+    @apply absolute top-1/2 w-[45%] h-px bg-border/50;
+  }
+
+  .auth-divider span::before {
+    @apply left-0;
+  }
+
+  .auth-divider span::after {
+    @apply right-0;
+  }
+}
+
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -144,7 +198,7 @@ body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -155,7 +209,7 @@ body {
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.9);
+    transform: translateY(30px) scale(0.95);
   }
   to {
     opacity: 1;

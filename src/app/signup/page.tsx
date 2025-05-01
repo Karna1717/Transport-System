@@ -5,8 +5,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { handleAuthError, setAuthToken } from "@/lib/utils/auth-helpers";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Signup() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,8 +22,50 @@ export default function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle the signup logic
-    console.log("Signup attempt with:", formData);
+    setIsLoading(true);
+
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create account');
+      }
+
+      // Save token and redirect
+      setAuthToken(data.token);
+      toast({
+        title: "Success",
+        description: "Account created successfully!",
+      });
+      router.push('/dashboard');
+    } catch (error: any) {
+      handleAuthError(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,6 +93,7 @@ export default function Signup() {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                   className="bg-background"
+                  disabled={isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -60,6 +109,7 @@ export default function Signup() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
                   className="bg-background"
+                  disabled={isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -75,6 +125,7 @@ export default function Signup() {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
                   className="bg-background"
+                  disabled={isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -90,6 +141,7 @@ export default function Signup() {
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   required
                   className="bg-background"
+                  disabled={isLoading}
                 />
               </div>
               <div className="flex items-center">
@@ -110,8 +162,12 @@ export default function Signup() {
                   </Link>
                 </label>
               </div>
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-                Create Account
+              <Button 
+                type="submit" 
+                className="w-full bg-primary hover:bg-primary/90"
+                disabled={isLoading}
+              >
+                {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
             </form>
           </CardContent>
@@ -127,10 +183,10 @@ export default function Signup() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" disabled={isLoading}>
                 Google
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" disabled={isLoading}>
                 GitHub
               </Button>
             </div>
