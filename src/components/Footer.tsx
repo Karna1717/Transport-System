@@ -121,7 +121,7 @@ export default function Footer() {
         <div className="border-t mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} TranspoEase. All rights reserved To Karan Tathe & Vineet Shukla
+              © {new Date().getFullYear()} TranspoEase. All rights reserved To Karan Tathe
             </p>
             <div className="flex space-x-6">
               <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
